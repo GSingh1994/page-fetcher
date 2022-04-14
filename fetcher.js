@@ -5,18 +5,24 @@ const fetcher = (url, path, writeContent) => {
   const request = require('request');
   request(`${url}/${path}`, function (error, response, body) {
     console.error('error:', error); // Print the error if one occurred
-
     writeContent(body);
   });
 };
 
 const writeContent = (websiteContent) => {
-  fs.writeFile('/home/labber/lighthouse/page-fetcher/index.html', websiteContent, (err) => {
+  const filePath = '/home/labber/lighthouse/page-fetcher/index.html';
+
+  fs.access(filePath, fs.F_OK, (err) => {
+    //if file doesnot exist
     if (err) {
-      console.error(err);
-      return;
+      fs.writeFile(filePath, websiteContent, (err) => {
+        if (err) {
+          console.error('err');
+          return;
+        }
+        console.log(`Downloaded and saved ${websiteContent.length} bytes to ./index.html`);
+      });
     }
-    console.log(`Downloaded and saved ${websiteContent.length} bytes to ./index.html`);
   });
 };
 
